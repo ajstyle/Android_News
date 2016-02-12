@@ -7,8 +7,33 @@ app.controller('redditCtrl'  , function($http,$scope){
    $scope.stories = [] ; 
 
 
+function loadStories(params, callback )
+{
+
+  $http.get('https://www.reddit.com/r/funny/new/.json', { params:params})
+.success(function(response){
+   var stories = [] ; 
+   angular.forEach(response.data.children , function(child){
+        stories.push(child.data);
+  
+   
+   
+   });  
+ callback(stories) ; 
+  });
+}
 
 
+
+$scope.loadNewStories = function() {
+
+    var params = {'before' : $scope.stories[0].name} ; 
+    loadStories(params , function(newerStories){
+       $scope.stories = newerStories.concat($scope.stories) ; 
+        $scope.$broadcast('scroll.refreshComplete');
+    }) ; 
+
+} 
 
 
 $scope.loadOlderStories = function(){
@@ -16,20 +41,16 @@ $scope.loadOlderStories = function(){
   if($scope.stories.length>0)
   {
       params['after'] = $scope.stories[$scope.stories.length-1].name;
-        console.log(params);
+       
   }
  
-
+loadStories(params , function(olderStories){
+   
+    $scope.stories = $scope.stories.concat(olderStories) ; 
+    $scope.$broadcast('scroll.infiniteScrollComplete');
+});
  
-$http.get('https://www.reddit.com/r/Android/.json', { params:params})
-.success(function(response){
-   angular.forEach(response.data.children , function(child){
-         $scope.stories.push(child.data);
-   console.log($scope.stories.length);
-   $scope.$broadcast('scroll.infiniteScrollComplete');
-   });  
 
-  });
 };
 });
 
