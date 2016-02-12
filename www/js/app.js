@@ -10,7 +10,7 @@ app.controller('redditCtrl'  , function($http,$scope){
 function loadStories(params, callback )
 {
 
-  $http.get('https://www.reddit.com/r/funny/new/.json', { params:params})
+  $http.get('https://www.reddit.com/r/android/new/.json', { params:params})
 .success(function(response){
    var stories = [] ; 
    angular.forEach(response.data.children , function(child){
